@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز الاستخبارات الرقمية | الجمهورية اليمنية</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --yemen-red: #ce1126;
+            --yemen-black: #000000;
+            --yemen-white: #ffffff;
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --bg: #0a0f1c;
+            --card: #151b2d;
+            --elevated: #1e293b;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: #334155;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* Yemen Flag Header */
+        .yemen-stripes {
+            height: 6px;
+            display: flex;
+        }
+        
+        .stripe-red { background: var(--yemen-red); flex: 1; }
+        .stripe-white { background: var(--yemen-white); flex: 1; }
+        .stripe-black { background: var(--yemen-black); flex: 1; }
+        
+        /* Main Header */
+        .main-header {
+            background: var(--card);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .yemen-emblem {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--yemen-red), #991b1b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(206, 17, 38, 0.3);
+        }
+        
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .brand-text p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid rgba(22, 163, 74, 0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--success);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--border);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+        
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+        }
+        
+        /* Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 1600px) {
+            .dashboard-container {
+                grid-template-columns: 260px 1fr 350px;
+            }
+        }
+        
+        @media (max-width: 1400px) {
+            .dashboard-container {
+                grid-template-columns: 1fr 350px;
+            }
+            .sidebar-left { display: none; }
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-right { display: none; }
+        }
+        
+        /* Sidebar Left - Navigation */
+        .sidebar-left {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .nav-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--secondary);
+        }
+        
+        .nav-item.active {
+            border-right: 3px solid var(--secondary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        
+        .stat-card.yemen::before {
+            background: linear-gradient(90deg, var(--yemen-red), var(--yemen-white), var(--yemen-black));
+        }
+        
+        .stat-card.online::before { background: var(--success); }
+        .stat-card.warning::before { background: var(--warning); }
+        .stat-card.info::before { background: var(--info); }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: var(--elevated);
+        }
+        
+        .stat-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .stat-trend.up { color: var(--success); }
+        .stat-trend.down { color: var(--danger); }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        .chart-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .chart-filters {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .chart-filter {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: var(--elevated);
+            color: var(--muted);
+        }
+        
+        .chart-filter.active {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        /* Map Section */
+        .map-section {
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        
+        .map-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .map-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .yemen-focus-badge {
+            background: linear-gradient(135deg, var(--yemen-red), #991b1b);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        #map {
+            height: 400px;
+            background: var(--bg);
+        }
+        
+        /* Devices Table */
+        .devices-section {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-box {
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            width: 250px;
+        }
+        
+        .search-box::placeholder {
+            color: var(--muted);
+        }
+        
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .devices-table th {
+            background: var(--elevated);
+            padding: 15px;
+            text-align: right;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .devices-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        
+        .devices-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .device-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .device-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+           
+          display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .device-avatar.yemen {
+            background: linear-gradient(135deg, var(--yemen-red), #991b1b);
+        }
+        
+        .device-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .device-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .device-meta {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        
+        .yemen-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(206, 17, 38, 0.2);
+            color: #fca5a5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-online {
+            background: rgba(22, 163, 74, 0.2);
+            color: #86efac;
+        }
+        
+        .status-offline {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--muted);
+        }
+        
+        .fingerprint-cell {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--secondary);
+            background: var(--elevated);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        /* Sidebar Right - Detail Panel */
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .detail-panel {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .detail-empty {
+            padding: 60px 30px;
+            text-align: center;
+            color: var(--muted);
+        }
+        
+        .detail-empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .detail-content {
+            display: none;
+        }
+        
+        .detail-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .detail-header {
+            padding: 25px;
+            background: linear-gradient(135deg, var(--primary), #1e40af);
+            position: relative;
+        }
+        
+        .detail-header.yemen {
+            background: linear-gradient(135deg, var(--yemen-red), #7f1d1d);
+        }
+        
+        .detail-yemen-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .detail-device-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .detail-device-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .detail-device-meta {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .detail-section {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .detail-item {
+            background: var(--elevated);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+        
+        .detail-value.yemen {
+            color: #fca5a5;
+        }
+        
+        .detail-value.highlight {
+            color: var(--secondary);
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .yemen-analysis-box {
+            background: linear-gradient(135deg, rgba(206, 17, 38, 0.1), rgba(0, 0, 0, 0.2));
+            border: 1px solid rgba(206, 17, 38, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .yemen-analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fca5a5;
+            margin-bottom: 15px;
+        }
+        
+        .yemen-confidence {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .confidence-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--yemen-red), #f87171);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .confidence-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fca5a5;
+        }
+        
+        .yemen-indicators {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .yemen-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+        
+        .yemen-indicator.positive {
+            color: #86efac;
+        }
+        
+        .yemen-indicator.negative {
+            color: var(--muted);
+        }
+        
+        .json-viewer {
+            background: var(--elevated);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            overflow: auto;
+            max-height: 300px;
+            border: 1px solid var(--border);
+        }
+        
+        /* Footer */
+        .dashboard-footer {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .yemen-footer-stripes {
+            height: 4px;
+            display: flex;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .footer-text {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .footer-text strong {
+            color: var(--yemen-red);
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .yemen-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+        
+        .yemen-loader::before {
+            content: '🇾🇪';
+            font-size: 60px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-yemen 1.5s infinite;
+        }
+        
+        @keyframes pulse-yemen {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="yemen-stripes">
+    <div class="stripe-red"></div>
+    <div class="stripe-white"></div>
+    <div class="stripe-black"></div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="yemen-loader"></div>
+    <div class="loading-text">جاري تحميل مركز الاستخبارات الرقمية...</div>
+</div>
+
+<header class="main-header">
+    <div class="header-brand">
+        <div class="yemen-emblem">🇾🇪</div>
+        <div class="brand-text">
+            <h1>مركز الاستخبارات الرقمية</h1>
+            <p>الجمهورية اليمنية - Ministry of Telecommunications</p>
+        </div>
+    </div>
+    <div class="header-status">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>النظام نشط</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn" onclick="refreshData()">
+                <span>🔄</span>
+                <span>تحديث</span>
+            </button>
+            <button class="btn btn-primary" onclick="exportYemenReport()">
+                <span>📊</span>
+                <span>تقرير اليمن</span>
+            </button>
+            <button class="btn btn-danger" onclick="clearAllData()">
+                <span>🗑️</span>
+                <span>مسح</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <!-- Sidebar Left -->
+    <aside class="sidebar-left">
+        <div class="nav-section">
+            <div class="nav-title">القسم الرئيسي</div>
+            <div class="nav-item active" onclick="switchView('dashboard')">
+                <span>📊</span>
+                <span>لوحة التحكم</span>
+            </div>
+            <div class="nav-item" onclick="switchView('yemen')">
+                <span>🇾🇪</span>
+                <span>تركيز اليمن</span>
+            </div>
+            <div class="nav-item" onclick="switchView('devices')">
+                <span>📱</span>
+                <span>الأجهزة</span>
+            </div>
+            <div class="nav-item" onclick="switchView('map')">
+                <span>🗺️</span>
+                <span>الخريطة</span>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">التحليل</div>
+            <div class="nav-item" onclick="switchView('fingerprints')">
+                <span>🔐</span>
+                <span>البصمات</span>
+            </div>
+            <div class="nav-item" onclick="switchView('network')">
+                <span>🌐</span>
+                <span>الشبكة</span>
+            </div>
+            <div class="nav-item" onclick="switchView('behavior')">
+                <span>📈</span>
+                <span>السلوك</span>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">الإعدادات</div>
+            <div class="nav-item" onclick="switchView('settings')">
+                <span>⚙️</span>
+                <span>الإعدادات</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card yemen">
+                <div class="stat-header">
+                    <div class="stat-icon">🇾🇪</div>
+                    <span class="stat-trend up">↑ 15%</span>
+                </div>
+                <div class="stat-value" id="yemenDevices">0</div>
+                <div class="stat-label">أجهزة في اليمن</div>
+            </div>
+            <div class="stat-card online">
+                <div class="stat-header">
+                    <div class="stat-icon">●</div>
+                    <span class="stat-trend up">↑ 8%</span>
+                </div>
+                <div class="stat-value" id="onlineDevices">0</div>
+                <div class="stat-label">متصل الآن</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <div class="stat-icon">🎯</div>
+                    <span class="stat-trend up">↑ 23%</span>
+                </div>
+                <div class="stat-value" id="yemenConfidence">0%</div>
+                <div class="stat-label">دقة التحديد</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-header">
+                    <div class="stat-icon">🌍</div>
+                    <span class="stat-trend down">↓ 2</span>
+                </div>
+                <div class="stat-value" id="totalZones">0</div>
+                <div class="stat-label">مناطق زمنية</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">الزيارات اليمنية عبر الوقت</span>
+                    <div class="chart-filters">
+                        <span class="chart-filter active">24س</span>
+                        <span class="chart-filter">7أيام</span>
+                        <span class="chart-filter">30يوم</span>
+                    </div>
+                </div>
+                <canvas id="yemenChart" height="200"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">توزيع المناطق اليمنية</span>
+                </div>
+                <canvas id="regionsChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-section">
+            <div class="map-header">
+                <div class="map-title">
+                    <span>🗺️</span>
+                    <span>خريطة التوزيع الجغرافي - تركيز اليمن</span>
+                </div>
+                <span class="yemen-focus-badge">🇾🇪 تركيز اليمن</span>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- Devices Table -->
+        <div class="devices-section">
+            <div class="section-header">
+                <span class="section-title">الأجهزة المكتشفة</span>
+                <div class="section-actions">
+                    <input type="text" class="search-box" placeholder="🔍 البحث بمعرف الجهاز..." id="searchBox">
+                    <button class="btn" onclick="filterYemenOnly()">
+                        <span>🇾🇪</span>
+                        <span>اليمن فقط</span>
+                    </button>
+                </div>
+            </div>
+            <table class="devices-table">
+                <thead>
+                    <tr>
+                        <th>الجهاز</th>
+                        <th>البصمة</th>
+                        <th>الموقع</th>
+                        <th>الحالة</th>
+                        <th>الوقت</th>
+                    </tr>
+                </thead>
+                <tbody id="devicesTableBody">
+                    <!-- Generated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="dashboard-footer">
+            <div class="yemen-footer-stripes">
+                <div class="stripe-red" style="flex:1"></div>
+                <div class="stripe-white" style="flex:1"></div>
+                <div class="stripe-black" style="flex:1"></div>
+            </div>
+            <div class="footer-text">
+                <strong>الجمهورية اليمنية</strong> - وزارة الاتصالات وتقنية المعلومات<br>
+                النظام الوطني للاستخبارات الرقمية والأمن السيبراني © 2024
+            </div>
+        </div>
+    </main>
+
+    <!-- Sidebar Right - Detail Panel -->
+    <aside class="sidebar-right">
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-empty" id="detailEmpty">
+                <div class="detail-empty-icon">📋</div>
+                <div>اختر جهازاً لعرض التحليل المفصل</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:10px;">
+                    التحليل يتضمن تركيز اليمن والبصمة الرقمية
+                </div>
+            </div>
+            
+            <div class="detail-content" id="detailContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+// ========== Yemen Intelligence Dashboard System ==========
+
+const YEMEN_REGIONS = {
+    'Asia/Aden': { name: 'عدن', lat: 12.8, lng: 45.0, confidence: 95 },
+    'Asia/Sana': { name: 'صنعاء', lat: 15.4, lng: 44.2, confidence: 95 },
+    'Asia/Riyadh': { name: 'السعودية (قريب)', lat: 24.7, lng: 46.7, confidence: 60 },
+    'Africa/Cairo': { name: 'مصر (بعيد)', lat: 30.0, lng: 31.2, confidence: 20 }
+};
+
+let allDevices = [];
+let selectedDevice = null;
+let yemenOnly = false;
+
+// ========== Initialization ==========
+window.onload = () => {
+    setTimeout(() => {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        initMap();
+        initCharts();
+        loadDevices();
+        startRealtimeUpdates();
+    }, 1500);
+};
+
+// ========== Data Loading ==========
+function loadDevices() {
+    // Load from localStorage (simulation)
+    const keys = Object.keys(localStorage).filter(k => k.startsWith('yemen_intel_'));
+    const devices = [];
+    
+    keys.forEach(key => {
+        try {
+            const dayDevices = JSON.parse(localStorage.getItem(key));
+            devices.push(...dayDevices);
+        } catch(e) {}
+    });
+    
+    // Remove duplicates
+    const unique = new Map();
+    devices.forEach(d => {
+        if (!unique.has(d.deviceId) || new Date(d.timestamp) > new Date(unique.get(d.deviceId).timestamp)) {
+            unique.set(d.deviceId, d);
+        }
+    });
+    
+    allDevices = Array.from(unique.values())
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    updateDashboard();
+}
+
+function updateDashboard() {
+    updateStats();
+    updateMap();
+    updateTable();
+    updateCharts();
+}
+
+// ========== Statistics ==========
+function updateStats() {
+    const yemenDevices = allDevices.filter(d => 
+        d.yemenAnalysis?.likelyInYemen || 
+        d.yemenAnalysis?.timezoneMatch ||
+        d.time?.timezone?.includes('Aden') ||
+        d.time?.timezone?.includes('Sana')
+    );
+    
+    document.getElementById('yemenDevices').textContent = yemenDevices.length;
+    document.getElementById('onlineDevices').textContent = allDevices.filter(d => d.device?.onLine).length;
+    
+    const avgConfidence = yemenDevices.length > 0 
+        ? Math.round(yemenDevices.reduce((sum, d) => sum + (d.yemenAnalysis?.confidence || 0), 0) / yemenDevices.length)
+        : 0;
+    document.getElementById('yemenConfidence').textContent = avgConfidence + '%';
+    
+    const zones = new Set(allDevices.map(d => d.time?.timezone).filter(Boolean));
+    document.getElementById('totalZones').textContent = zones.size;
+}
+
+// ========== Map ==========
+let map;
+let markers = [];
+
+function initMap() {
+    map = L.map('map').setView([15.5, 48.5], 6); // Yemen center
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    
+    // Yemen border approximation
+    const yemenBorder = [
+        [12.1, 43.2], [12.2, 43.5], [12.8, 43.8], [13.5, 43.9],
+        [14.0, 44.0], [14.5, 44.2], [15.0, 44.5], [15.5, 44.8],
+        [16.0, 44.5], [16.5, 44.0], [17.0, 43.5], [17.5, 43.0],
+        [18.0, 43.2], [18.5, 43.5], [19.0, 43.0], [18.8, 42.0],
+        [18.5, 41.0], [18.0, 40.5], [17.0, 40.0], [16.0, 40.5],
+        [15.0, 41.0], [14.0, 41.5], [13.0, 42.0], [12.5, 42.5],
+        [12.1, 43.2]
+    ];
+    
+    L.polygon(yemenBorder, {
+        color: '#ce1126',
+        fillColor: '#ce1126',
+        fillOpacity: 0.1,
+        weight: 2
+    }).addTo(map).bindPopup('الجمهورية اليمنية');
+}
+
+function updateMap() {
+    // Clear old markers
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    
+    const displayDevices = yemenOnly 
+        ? allDevices.filter(d => d.yemenAnalysis?.likelyInYemen)
+        : allDevices;
+    
+    displayDevices.forEach(d => {
+        const zone = d.time?.timezone;
+        const region = YEMEN_REGIONS[zone] || { 
+            name: zone || 'Unknown', 
+            lat: 15.5 + (Math.random() - 0.5) * 4, 
+            lng: 48.5 + (Math.random() - 0.5) * 4,
+            confidence: d.yemenAnalysis?.confidence || 50
+        };
+        
+        const isYemen = d.yemenAnalysis?.likelyInYemen;
+        const color = isYemen ? '#ce1126' : '#3b82f6';
+        
+        const marker = L.circleMarker([region.lat, region.lng], {
+            radius: isYemen ? 10 : 8,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map);
+        
+        marker.bindPopup(`
+            <div style="font-family:system-ui;text-align:center;">
+                <div style="font-size:20px;margin-bottom:5px;">${isYemen ? '🇾🇪' : '📱'}</div>
+                <div style="font-weight:bold;">${d.deviceId}</div>
+                <div style="font-size:12px;color:#666;">${region.name}</div>
+                <div style="font-size:11px;margin-top:5px;">
+                    ثقة: ${d.yemenAnalysis?.confidence || 0}%
+                </div>
+            </div>
+        `);
+        
+        marker.on('click', () => selectDevice(d.deviceId));
+        markers.push(marker);
+    });
+}
+
+// ========== Table ==========
+function updateTable() {
+    const tbody = document.getElementById('devicesTableBody');
+    const displayDevices = yemenOnly
+        ? allDevices.filter(d => d.yemenAnalysis?.likelyInYemen)
+        : allDevices.slice(0, 50);
+    
+    if (displayDevices.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center;padding:40px;color:var(--muted);">
+                    لا توجد أجهزة ${yemenOnly ? 'يمنية' : ''} مسجلة
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = displayDevices.map(d => {
+        const isYemen = d.yemenAnalysis?.likelyInYemen;
+        const isNew = (Date.now() - new Date(d.timestamp).getTime()) < 300000;
+        
+        let icon = '📱';
+        const ua = (d.device?.userAgent || '').toLowerCase();
+        if (ua.includes('iphone')) icon = '🍎';
+        else if (ua.includes('android')) icon = '🤖';
+        
+        return `
+            <tr onclick="selectDevice('${d.deviceId}')" style="cursor:pointer;">
+                <td>
+                    <div class="device-cell">
+                        <div class="device-avatar ${isYemen ? 'yemen' : ''}">${icon}</div>
+                        <div class="device-info">
+                            <span class="device-id">${d.deviceId}</span>
+                            <span class="device-meta">
+                                ${d.device?.platform || 'Unknown'}
+                                ${isYemen ? '<span class="yemen-badge">🇾🇪 اليمن</span>' : ''}
+                                ${isNew ? '<span class="yemen-badge" style="background:rgba(245,158,11,0.2);color:#fcd34d;">جديد</span>' : ''}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="fingerprint-cell">${d.fingerprint?.substring(0, 12) || 'N/A'}...</span>
+                </td>
+                <td>
+                    ${d.yemenAnalysis?.arabicLanguage ? 'العربية ✅' : 'غير عربي'}
+                    <br>
+                    <span style="font-size:12px;color:var(--muted);">
+                        ${d.time?.timezone || '-'}
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge ${d.device?.onLine ? 'status-online' : 'status-offline'}">
+                        ${d.device?.onLine ? '● متصل' : '○ غير متصل'}
+                    </span>
+                </td>
+                <td>${formatTime(d.timestamp)}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function formatTime(iso) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return `${Math.floor(diff/60)} دقيقة`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} ساعة`;
+    return d.toLocaleDateString('ar-YE');
+}
+
+// ========== Detail Panel ==========
+function selectDevice(deviceId) {
+    selectedDevice = allDevices.find(d => d.deviceId === deviceId);
+    if (!selectedDevice) return;
+    
+    const d = selectedDevice;
+    const isYemen = d.yemenAnalysis?.likelyInYemen;
+    
+    document.getElementById('detailEmpty').style.display = 'none';
+    document.getElementById('detailContent').classList.add('active');
+    
+    const content = document.getElementById('detailContent');
+    
+    content.innerHTML = `
+        <div class="detail-header ${isYemen ? 'yemen' : ''}">
+            ${isYemen ? `
+                <div class="detail-yemen-badge">
+                    <span>🇾🇪</span>
+                    <span>جهاز يمني مؤكد</span>
+                </div>
+            ` : ''}
+            <div class="detail-device-icon">${isYemen ? '🇾🇪' : '📱'}</div>
+            <div class="detail-device-id">${d.deviceId}</div>
+            <div class="detail-device-meta">
+                ${d.device?.platform} • ${formatTime(d.timestamp)}
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>🔐</span>
+                <span>البصمة الرقمية الفريدة</span>
+            </div>
+            <div class="detail-item" style="grid-column:1/-1;">
+                <div class="detail-label">Fingerprint Hash</div>
+                <div class="detail-value highlight">${d.fingerprint || 'N/A'}</div>
+            </div>
+        </div>
+        
+        ${isYemen ? `
+        <div class="detail-section">
+            <div class="yemen-analysis-box">
+                <div class="yemen-analysis-title">
+                    <span>🇾🇪</span>
+                    <span>تحليل تركيز اليمن</span>
+                </div>
+                <div class="yemen-confidence">
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width:${d.yemenAnalysis?.confidence || 0}%"></div>
+                    </div>
+                    <div class="confidence-value">${d.yemenAnalysis?.confidence || 0}%</div>
+                </div>
+                <div class="yemen-indicators">
+                    <div class="yemen-indicator ${d.yemenAnalysis?.timezoneMatch ? 'positive' : 'negative'}">
+                        <span>${d.yemenAnalysis?.timezoneMatch ? '✓' : '✗'}</span>
+                        <span>المنطقة الزمنية اليمنية</span>
+                    </div>
+                    <div class="yemen-indicator ${d.yemenAnalysis?.arabicLanguage ? 'positive' : 'negative'}">
+                        <span>${d.yemenAnalysis?.arabicLanguage ? '✓' : '✗'}</span>
+                        <span>اللغة العربية</span>
+                    </div>
+                    <div class="yemen-indicator ${d.yemenAnalysis?.hasArabicFonts ? 'positive' : 'negative'}">
+                        <span>${d.yemenAnalysis?.hasArabicFonts ? '✓' : '✗'}</span>
+                        <span>خطوط عربية</span>
+                    </div>
+                    <div class="yemen-indicator positive">
+                        <span>✓</span>
+                        <span>توقيت مناسب</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+        
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>📱</span>
+                <span>معلومات الجهاز</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">المنصة</div>
+                    <div class="detail-value ${isYemen ? 'yemen' : ''}">${d.device?.platform || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">المعالج</div>
+                    <div class="detail-value">${d.device?.hardwareConcurrency || '?'} أنوية</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">الذاكرة</div>
+                    <div class="detail-value">${d.device?.deviceMemory || '?'} GB</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">GPU</div>
+                    <div class="detail-value">${d.webgl?.renderer?.substring(0, 20) || '-'}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>📐</span>
+                <span>الشاشة</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">الدقة</div>
+                    <div class="detail-value">${d.screen?.width} × ${d.screen?.height}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">نسبة البكسل</div>
+                    <div class="detail-value">${d.screen?.devicePixelRatio}x</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>🌍</span>
+                <span>الموقع والوقت</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">المنطقة الزمنية</div>
+                    <div class="detail-value ${isYemen ? 'yemen' : ''}">${d.time?.timezone || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">الفرق عن UTC</div>
+                    <div class="detail-value">${d.time?.timezoneOffsetHours || 0} ساعات</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>📄</span>
+                <span>البيانات الخام (JSON)</span>
+            </div>
+            <pre class="json-viewer">${JSON.stringify(d, null, 2)}</pre>
+        </div>
+    `;
+}
+
+// ========== Charts ==========
+let yemenChart, regionsChart;
+
+function initCharts() {
+    // Yemen visits chart
+    const ctx1 = document.getElementById('yemenChart').getContext('2d');
+    yemenChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            datasets: [{
+                label: 'الزيارات اليمنية',
+                data: new Array(24).fill(0),
+                borderColor: '#ce1126',
+                backgroundColor: 'rgba(206, 17, 38, 0.1)',
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'باقي المناطق',
+                data: new Array(24).fill(0),
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#94a3b8' }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+    
+    // Regions pie chart
+    const ctx2 = document.getElementById('regionsChart').getContext('2d');
+    regionsChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['اليمن', 'السعودية', 'الإمارات', 'مصر', 'أخرى'],
+            datasets: [{
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                    '#ce1126', // Yemen red
+                    '#16a34a', // Saudi green
+                    '#1e3a8a', // UAE blue
+                    '#f59e0b', // Egypt gold
+                    '#64748b'  // Others gray
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+function updateCharts() {
+    // Update with real data
+    const yemenDevices = allDevices.filter(d => d.yemenAnalysis?.likelyInYemen);
+    const hourlyData = new Array(24).fill(0);
+    const otherHourly = new Array(24).fill(0);
+    
+    allDevices.forEach(d => {
+        const hour = new Date(d.timestamp).getHours();
+        if (d.yemenAnalysis?.likelyInYemen) {
+            hourlyData[hour]++;
+        } else {
+            otherHourly[hour]++;
+        }
+    });
+    
+    yemenChart.data.datasets[0].data = hourlyData;
+    yemenChart.data.datasets[1].data = otherHourly;
+    yemenChart.update();
+    
+    // Regions
+    const regions = {
+        'اليمن': yemenDevices.length,
+        'السعودية': allDevices.filter(d => d.time?.timezone === 'Asia/Riyadh').length,
+        'الإمارات': allDevices.filter(d => d.time?.timezone === 'Asia/Dubai').length,
+        'مصر': allDevices.filter(d => d.time?.timezone === 'Africa/Cairo').length,
+        'أخرى': allDevices.filter(d => 
+            !['Asia/Aden', 'Asia/Sana', 'Asia/Riyadh', 'Asia/Dubai', 'Africa/Cairo'].includes(d.time?.timezone)
+        ).length
+    };
+    
+    regionsChart.data.datasets[0].data = Object.values(regions);
+    regionsChart.update();
+}
+
+// ========== Actions ==========
+function refreshData() {
+    loadDevices();
+    alert('تم تحديث البيانات');
+}
+
+function filterYemenOnly() {
+    yemenOnly = !yemenOnly;
+    event.target.style.background = yemenOnly ? '#ce1126' : '';
+    updateMap();
+    updateTable();
+}
+
+function exportYemenReport() {
+    const yemenDevices = allDevices.filter(d => d.yemenAnalysis?.likelyInYemen);
+    const report = {
+        generatedAt: new Date().toISOString(),
+        title: 'تقرير الأجهزة اليمنية',
+        totalDevices: allDevices.length,
+        yemenDevices: yemenDevices.length,
+        percentage: Math.round((yemenDevices.length / allDevices.length) * 100) || 0,
+        devices: yemenDevices
+    };
+    
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `yemen_report_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+}
+
+function clearAllData() {
+    if (!confirm('هل أنت متأكد من مسح جميع البيانات؟')) return;
+    
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('yemen_intel_')) {
+            localStorage.removeItem(key);
+        }
+    });
+    
+    allDevices = [];
+    selectedDevice = null;
+    updateDashboard();
+    
+    document.getElementById('detailEmpty').style.display = 'block';
+    document.getElementById('detailContent').classList.remove('active');
+}
+
+function switchView(view) {
+    // Navigation simulation
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    event.target.closest('.nav-item').classList.add('active');
+    
+    // In real app, this would switch views
+    console.log('Switch to:', view);
+}
+
+// ========== Real-time Updates ==========
+function startRealtimeUpdates() {
+    // Check for new data every 3 seconds
+    setInterval(() => {
+        const lastUpdate = localStorage.getItem('yemen_last_update');
+        if (lastUpdate && Date.now() - parseInt(lastUpdate) < 5000) {
+            loadDevices();
+            
+            // Notification
+            if (Notification.permission === 'granted') {
+                new Notification('جهاز يمني جديد', {
+                    body: 'تم اكتشاف جهاز جديد في اليمن',
+                    icon: '🇾🇪'
+                });
+            }
+        }
+    }, 3000);
+    
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'r' && e.ctrlKey) {
+        e.preventDefault();
+        refreshData();
+    }
+    if (e.key === 'y' && e.ctrlKey) {
+        e.preventDefault();
+        filterYemenOnly();
+    }
+    if (e.key === 'Escape') {
+        selectedDevice = null;
+        document.getElementById('detailEmpty').style.display = 'block';
+        document.getElementById('detailContent').classList.remove('active');
+        document.querySelectorAll('.device-item').forEach(i => i.classList.remove('active'));
+    }
+});
+</script>
+
+</body>
+</html>
+
+
+

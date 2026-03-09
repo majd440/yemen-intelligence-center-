@@ -1,0 +1,6 @@
+📁 yemen-intelligence/
+├── 📄 index.html          ← صفحة الجمع الذكية
+├── 📄 dashboard.html      ← لوحة التحكم المتقدمة
+├── 📄 worker.js           ← Service Worker للاستمرارية
+├── 📄 manifest.json       ← تطبيق ويب تقدمي (PWA)
+└── 📄 README.md

